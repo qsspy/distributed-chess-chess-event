@@ -24,10 +24,10 @@ public class LastMessageOmitCommitOffsetStrategy implements CommitOffsetStrategy
     }
 
     @Override
-    public Mono<Void> commit(final ReceiverOffset offset, final String topicName) {
-        final ReceiverOffset lastProcessedOffset = this.getFromCache(topicName);
+    public Mono<Void> commit(final ReceiverOffset offset, final String accessToken) {
+        final ReceiverOffset lastProcessedOffset = this.getFromCache(accessToken);
         if(lastProcessedOffset == null) {
-            this.putInCache(topicName, offset);
+            this.putInCache(accessToken, offset);
             return Mono.empty();
         }
 
@@ -36,7 +36,7 @@ public class LastMessageOmitCommitOffsetStrategy implements CommitOffsetStrategy
             return Mono.empty();
         }
 
-        this.putInCache(topicName, offset);
+        this.putInCache(accessToken, offset);
         return lastProcessedOffset.commit();
     }
 

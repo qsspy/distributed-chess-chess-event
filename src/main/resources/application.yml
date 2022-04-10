@@ -10,3 +10,7 @@ kafka:
 
 chess-front:
   address: ~
+
+logging:
+  level:
+    org.apache.kafka: WARN

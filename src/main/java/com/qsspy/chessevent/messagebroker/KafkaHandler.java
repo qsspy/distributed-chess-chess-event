@@ -24,7 +24,7 @@ import java.util.Map;
 public class KafkaHandler<T> implements MessageBrokerHandler{
 
     private static final String CLIENT_ID_PREFIX = "player-";
-    private static final String GAME_ID_PREFIX = "game-";
+    private static final String GROUP_ID_PREFIX = "group-";
 
     private final KafkaConfiguration configuration;
     private final CommitOffsetStrategy commitStrategy;
@@ -32,20 +32,22 @@ public class KafkaHandler<T> implements MessageBrokerHandler{
     @Override
     public Flux<String> subscribeToEventStream(final String topicName, final String accessToken) {
 
-        final ReceiverOptions<String, String> options = ReceiverOptions.<String, String>create(buildConfigMap(topicName, accessToken)).subscription(Collections.singleton(topicName));
+        final ReceiverOptions<String, String> options = ReceiverOptions.<String, String>create(buildConfigMap(accessToken)).subscription(Collections.singleton(topicName));
         final KafkaReceiver<String, String> receiver = new DefaultKafkaReceiver<>(ConsumerFactory.INSTANCE, options);
         return receiver.receive()
+                .doOnSubscribe(item -> log.info("Successfully connected player {} with topic {}!", accessToken, topicName))
                 .doOnNext(consumedRecord -> {
-                    commitStrategy.commit(consumedRecord.receiverOffset(), topicName);
+                    commitStrategy.commit(consumedRecord.receiverOffset(), accessToken);
                     log.info("Received element for topicName {}, playerToken {}, VALUE : {}", topicName, accessToken, consumedRecord.value());
                 })
+                .doOnCancel(() -> log.info("Successfully disconnected player {} from topic {}!", accessToken, topicName))
                 .map(ConsumerRecord::value);
     }
 
-    private Map<String, Object> buildConfigMap(final String topicName, final String accessToken) {
+    private Map<String, Object> buildConfigMap(final String accessToken) {
         final Map<String, Object> configMap = new HashMap<>(configuration.getDefaultConfig());
         configMap.put(ConsumerConfig.CLIENT_ID_CONFIG, CLIENT_ID_PREFIX + accessToken);
-        configMap.put(ConsumerConfig.GROUP_ID_CONFIG, GAME_ID_PREFIX + topicName);
+        configMap.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID_PREFIX + accessToken);
         return configMap;
     }
 }
