@@ -1,0 +1,5 @@
+kafka:
+  bootstrapServers: "localhost:9093"
+
+chess-front:
+  address: "http://localhost:3000"

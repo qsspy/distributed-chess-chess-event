@@ -1,0 +1,5 @@
+kafka:
+  bootstrapServers: ${KAFKA_BOOTSTRAP_ADDRESS}
+
+chess-front:
+  address: ${CHESS_FRONT_ADDRESS}

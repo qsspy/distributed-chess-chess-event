@@ -1,0 +1,12 @@
+server:
+  port: 8085
+
+kafka:
+  bootstrapServers: ~
+  allowAutoCreateTopicsConfig: false
+  autoOffsetResetConfig: earliest
+  connectionsMaxIdleMsConfig: 1000000
+  maxPollIntervalMsConfig: 1000000
+
+chess-front:
+  address: ~
