@@ -22,8 +22,8 @@ public class ChessEventController {
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @CrossOrigin
     public Flux<String> getBoardEventStream(
-            @RequestParam("gameTopicId") final UUID topicId,
-            @RequestParam("userToken") final UUID userToken
+            @RequestHeader("Game-Topic-Id") final UUID topicId,
+            @RequestHeader("User-Token") final UUID userToken
     ) {
         log.info("Received request for board event stream for topicId {} and userToken {}", topicId, userToken);
         return eventService.getBoardEventStream(topicId, userToken);
