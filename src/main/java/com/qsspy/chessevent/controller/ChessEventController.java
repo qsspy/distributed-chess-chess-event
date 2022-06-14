@@ -20,7 +20,7 @@ public class ChessEventController {
     private final ChessEventService eventService;
 
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+    @CrossOrigin
     public Flux<String> getBoardEventStream(
             @RequestHeader("Game-Topic-Id") final UUID topicId,
             @RequestHeader("User-Token") final UUID userToken
